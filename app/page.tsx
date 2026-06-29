@@ -602,7 +602,7 @@ export default function Dashboard() {
           { id: 'categories' as const, label: '📁 分类统计', emoji: '📁' },
           { id: 'pricing' as const, label: '💰 定价推荐', emoji: '💰' },
           { id: 'scenarios' as const, label: '🎯 场景分析', emoji: '🎯' },
-          { id: 'targets' as const, label: '🎪 目标分析', emoji: '🎪' },
+          
         ].map((tab) => (
           <button
             key={tab.id}
