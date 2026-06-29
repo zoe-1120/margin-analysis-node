@@ -1537,7 +1537,7 @@ export default function Dashboard() {
                             color: colors.goldMain,
                             fontWeight: '600',
                           }}>
-                            ¥{Math.round(costAnalysis?.highestTotalCost?.totalCost ?? analysis.products[0]?.cost * analysis.products[0]?.sales_volume ?? 0).toLocaleString()}
+                            ¥{Math.round(costAnalysis?.highestTotalCost?.totalCost ?? ((analysis.products[0]?.cost || 0) * (analysis.products[0]?.sales_volume || 0))).toLocaleString()}
                           </div>
                         </div>
                       </div>
