@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Analysis {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  status    String   @default("completed")
+  data      String
+  products  Product[]
+  financials Financial[]
+
+  @@index([createdAt])
+}
+
+model Product {
+  id             Int     @id @default(autoincrement())
+  analysisId     Int
+  analysis       Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  productId      String
+  productName    String
+  category       String
+  cost           Float
+  price          Float
+  salesVolume    Int
+  grossMarginPct Float
+  grossMarginAbs Float
+  totalMargin    Float
+
+  @@index([analysisId])
+}
+
+model Financial {
+  id            Int     @id @default(autoincrement())
+  analysisId    Int
+  analysis      Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  statementType String
+  lineItem      String
+  value         Float
+
+  @@index([analysisId])
+}
