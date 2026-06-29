@@ -53,7 +53,7 @@ export default function Dashboard() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'categories' | 'pricing' | 'scenarios' | 'recommendations' | 'alerts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'categories' | 'pricing' | 'scenarios' | 'targets' | 'recommendations' | 'alerts'>('overview');
   const [targetMarginPct, setTargetMarginPct] = useState(70);
   const [pricingRecs, setPricingRecs] = useState<PricingRecommendation[]>([]);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
