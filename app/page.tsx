@@ -1378,7 +1378,7 @@ export default function Dashboard() {
                           🎯 当前毛利率
                         </h4>
                         <p style={{ margin: 0, color: colors.white, fontSize: '14px' }}>
-                          {targetRecs.currentMarginPct?.toFixed(2)}%
+                          {(targetRecs?.currentMarginPct ?? analysis.metrics.margin_pct).toFixed(2)}%
                         </p>
                       </div>
 
@@ -1398,101 +1398,100 @@ export default function Dashboard() {
                           🎯 推荐目标
                         </h4>
                         <p style={{ margin: 0, color: colors.white, fontSize: '14px' }}>
-                          {targetRecs.recommendedTarget}%
+                          {(targetRecs?.recommendedTarget ?? Math.round(analysis.metrics.margin_pct + 5)).toLocaleString()}%
                         </p>
                       </div>
                     </div>
                   </div>
 
                   {/* 成本分析 */}
-                  {costAnalysis && (
-                    <div style={{
-                      background: `rgba(255, 255, 255, 0.08)`,
-                      backdropFilter: 'blur(15px)',
-                      border: `1px solid ${colors.goldMain}`,
-                      borderRadius: '8px',
-                      padding: '30px',
-                      marginBottom: '30px',
+                  <div style={{
+                    background: `rgba(255, 255, 255, 0.08)`,
+                    backdropFilter: 'blur(15px)',
+                    border: `1px solid ${colors.goldMain}`,
+                    borderRadius: '8px',
+                    padding: '30px',
+                    marginBottom: '30px',
+                  }}>
+                    <h3 style={{
+                      fontSize: '14px',
+                      color: colors.goldMain,
+                      margin: '0 0 20px 0',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
                     }}>
-                      <h3 style={{
-                        fontSize: '14px',
-                        color: colors.goldMain,
-                        margin: '0 0 20px 0',
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px',
+                      💰 成本分析
+                    </h3>
+
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gap: '20px',
+                    }}>
+                      <div style={{
+                        background: `rgba(255, 107, 107, 0.15)`,
+                        border: `1px solid rgba(255, 107, 107, 0.3)`,
+                        borderRadius: '8px',
+                        padding: '20px',
+                        textAlign: 'center',
                       }}>
-                        💰 成本分析
-                      </h3>
+                        <div style={{
+                          fontSize: '12px',
+                          color: colors.textSecondary,
+                          marginBottom: '8px',
+                          textTransform: 'uppercase',
+                          fontWeight: '600',
+                        }}>
+                          最高成本单位
+                        </div>
+                        <div style={{
+                          fontSize: '14px',
+                          color: colors.white,
+                          fontWeight: '700',
+                          marginBottom: '4px',
+                        }}>
+                          {costAnalysis?.highestCostPerUnit?.productName || analysis.products[0]?.product_name || 'N/A'}
+                        </div>
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#ff6b6b',
+                          fontWeight: '600',
+                        }}>
+                          ¥{(costAnalysis?.highestCostPerUnit?.cost ?? analysis.products[0]?.cost ?? 0).toFixed(2)}
+                        </div>
+                      </div>
 
                       <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: '20px',
+                        background: `rgba(81, 207, 102, 0.15)`,
+                        border: `1px solid rgba(81, 207, 102, 0.3)`,
+                        borderRadius: '8px',
+                        padding: '20px',
+                        textAlign: 'center',
                       }}>
                         <div style={{
-                          background: `rgba(255, 107, 107, 0.15)`,
-                          border: `1px solid rgba(255, 107, 107, 0.3)`,
-                          borderRadius: '8px',
-                          padding: '20px',
-                          textAlign: 'center',
+                          fontSize: '12px',
+                          color: colors.textSecondary,
+                          marginBottom: '8px',
+                          textTransform: 'uppercase',
+                          fontWeight: '600',
                         }}>
-                          <div style={{
-                            fontSize: '12px',
-                            color: colors.textSecondary,
-                            marginBottom: '8px',
-                            textTransform: 'uppercase',
-                            fontWeight: '600',
-                          }}>
-                            最高成本单位
-                          </div>
-                          <div style={{
-                            fontSize: '14px',
-                            color: colors.white,
-                            fontWeight: '700',
-                            marginBottom: '4px',
-                          }}>
-                            {costAnalysis.highestCostPerUnit?.productName || 'N/A'}
-                          </div>
-                          <div style={{
-                            fontSize: '12px',
-                            color: '#ff6b6b',
-                            fontWeight: '600',
-                          }}>
-                            ¥{costAnalysis.highestCostPerUnit?.cost.toFixed(2) || '0'}
-                          </div>
+                          最低成本单位
                         </div>
-
                         <div style={{
-                          background: `rgba(81, 207, 102, 0.15)`,
-                          border: `1px solid rgba(81, 207, 102, 0.3)`,
-                          borderRadius: '8px',
-                          padding: '20px',
-                          textAlign: 'center',
-                        }}>
-                          <div style={{
-                            fontSize: '12px',
-                            color: colors.textSecondary,
-                            marginBottom: '8px',
-                            textTransform: 'uppercase',
-                            fontWeight: '600',
-                          }}>
-                            最低成本单位
-                          </div>
-                          <div style={{
                             fontSize: '14px',
                             color: colors.white,
                             fontWeight: '700',
                             marginBottom: '4px',
                           }}>
-                            {costAnalysis.lowestCostPerUnit?.productName || 'N/A'}
+                            {costAnalysis?.lowestCostPerUnit?.productName || analysis.products[analysis.products.length-1]?.product_name || 'N/A'}
                           </div>
                           <div style={{
                             fontSize: '12px',
                             color: '#51cf66',
                             fontWeight: '600',
                           }}>
-                            ¥{costAnalysis.lowestCostPerUnit?.cost.toFixed(2) || '0'}
+                            ¥{(costAnalysis?.lowestCostPerUnit?.cost ?? analysis.products[analysis.products.length-1]?.cost ?? 0).toFixed(2)}
                           </div>
                         </div>
 
@@ -1518,14 +1517,14 @@ export default function Dashboard() {
                             fontWeight: '700',
                             marginBottom: '4px',
                           }}>
-                            {costAnalysis.highestTotalCost?.productName || 'N/A'}
+                            {costAnalysis?.highestTotalCost?.productName || analysis.products[0]?.product_name || 'N/A'}
                           </div>
                           <div style={{
                             fontSize: '12px',
                             color: colors.goldMain,
                             fontWeight: '600',
                           }}>
-                            ¥{Math.round(costAnalysis.highestTotalCost?.totalCost || 0).toLocaleString()}
+                            ¥{Math.round(costAnalysis?.highestTotalCost?.totalCost ?? analysis.products[0]?.cost * analysis.products[0]?.sales_volume ?? 0).toLocaleString()}
                           </div>
                         </div>
                       </div>
