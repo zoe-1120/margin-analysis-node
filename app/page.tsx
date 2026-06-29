@@ -1550,32 +1550,6 @@ export default function Dashboard() {
         gap: '15px',
         justifyContent: 'flex-end',
       }}>
-        <button
-          onClick={handleExportPDF}
-          style={{
-            padding: '10px 24px',
-            background: `linear-gradient(135deg, ${colors.goldMain}, ${colors.goldSecondary})`,
-            color: colors.darkBg1,
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontWeight: '700',
-            fontSize: '12px',
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            transition: 'all 0.3s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = `0 8px 16px rgba(176, 155, 123, 0.3)`;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          📄 导出PDF报告
-        </button>
 
         <button
           onClick={() => {
