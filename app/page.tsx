@@ -1337,10 +1337,8 @@ export default function Dashboard() {
                 🎪 目标分析与建议
               </h2>
 
-              {targetRecs && (
-                <>
-                  {/* 改进建议卡片 */}
-                  <div style={{
+              {/* 改进建议卡片 */}
+              <div style={{
                     background: `rgba(255, 255, 255, 0.08)`,
                     backdropFilter: 'blur(15px)',
                     border: `1px solid ${colors.goldMain}`,
@@ -1532,9 +1530,6 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
             </div>
           )}
         </div>
