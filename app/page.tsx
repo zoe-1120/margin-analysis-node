@@ -12,6 +12,12 @@ import {
   type PricingRecommendation,
   type IfThenScenario,
 } from '@/lib/analysis-helper';
+import {
+  generateProductRecommendations,
+  generateAnomalyAlerts,
+  type ProductRecommendation,
+  type AnomalyAlert,
+} from '@/lib/phase1-analysis';
 import { generatePDFReport } from '@/lib/pdf-export';
 
 interface Product {
@@ -47,13 +53,15 @@ export default function Dashboard() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'categories' | 'pricing' | 'scenarios' | 'targets'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'categories' | 'pricing' | 'scenarios' | 'recommendations' | 'alerts'>('overview');
   const [targetMarginPct, setTargetMarginPct] = useState(70);
   const [pricingRecs, setPricingRecs] = useState<PricingRecommendation[]>([]);
   const [categoryStats, setCategoryStats] = useState<CategoryStat[]>([]);
   const [scenarios, setScenarios] = useState<IfThenScenario[]>([]);
   const [costAnalysis, setCostAnalysis] = useState<any>(null);
   const [targetRecs, setTargetRecs] = useState<any>(null);
+  const [productRecs, setProductRecs] = useState<ProductRecommendation[]>([]);
+  const [alerts, setAlerts] = useState<AnomalyAlert[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 颜色定义
@@ -130,6 +138,10 @@ export default function Dashboard() {
       setCostAnalysis(analyzeCosts(newAnalysis.products));
       setScenarios(generateIfThenScenarios(newAnalysis.products, newAnalysis.metrics));
       setTargetRecs(generateTargetRecommendations(newAnalysis.products, newAnalysis.metrics));
+
+      // Phase 1 分析
+      setProductRecs(generateProductRecommendations(newAnalysis.products, newAnalysis.metrics));
+      setAlerts(generateAnomalyAlerts(newAnalysis.products, newAnalysis.metrics));
 
       setActiveTab('overview');
     } catch (error) {
@@ -602,7 +614,8 @@ export default function Dashboard() {
           { id: 'categories' as const, label: '📁 分类统计', emoji: '📁' },
           { id: 'pricing' as const, label: '💰 定价推荐', emoji: '💰' },
           { id: 'scenarios' as const, label: '🎯 场景分析', emoji: '🎯' },
-          
+          { id: 'recommendations' as const, label: '🚨 销售建议', emoji: '🚨' },
+          { id: 'alerts' as const, label: '⚠️ 异常告警', emoji: '⚠️' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -1529,6 +1542,267 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
+            </div>
+          )}
+
+          {activeTab === 'recommendations' && (
+            <div>
+              <h2 style={{
+                fontSize: '20px',
+                color: colors.goldMain,
+                margin: '0 0 30px 0',
+                fontWeight: '700',
+              }}>
+                🚨 销售建议 - 产品组合分析
+              </h2>
+
+              {/* 产品分类总结 */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '20px',
+                marginBottom: '30px',
+              }}>
+                {[
+                  { type: 'star', label: '明星产品', count: productRecs.filter(r => r.type === 'star').length, icon: '⭐', color: '#ffc400' },
+                  { type: 'potential', label: '潜力产品', count: productRecs.filter(r => r.type === 'potential').length, icon: '📈', color: colors.goldMain },
+                  { type: 'clearance', label: '清库产品', count: productRecs.filter(r => r.type === 'clearance').length, icon: '🗑️', color: '#ff6b6b' },
+                ].map((category, i) => (
+                  <div key={i} style={{
+                    background: `rgba(255, 255, 255, 0.08)`,
+                    backdropFilter: 'blur(15px)',
+                    border: `1px solid ${category.color}`,
+                    borderRadius: '8px',
+                    padding: '24px',
+                    textAlign: 'center',
+                  }}>
+                    <div style={{ fontSize: '32px', marginBottom: '12px' }}>{category.icon}</div>
+                    <div style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '8px', textTransform: 'uppercase' }}>
+                      {category.label}
+                    </div>
+                    <div style={{ fontSize: '28px', fontWeight: '700', color: category.color }}>
+                      {category.count}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 产品详细推荐 */}
+              <div style={{
+                background: `rgba(255, 255, 255, 0.08)`,
+                backdropFilter: 'blur(15px)',
+                border: `1px solid ${colors.goldMain}`,
+                borderRadius: '8px',
+                padding: '30px',
+                overflow: 'auto',
+              }}>
+                <table style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  fontSize: '13px',
+                }}>
+                  <thead>
+                    <tr style={{
+                      borderBottom: `2px solid ${colors.goldMain}`,
+                      color: colors.goldMain,
+                      fontWeight: '700',
+                      textAlign: 'left',
+                      textTransform: 'uppercase',
+                      fontSize: '11px',
+                      letterSpacing: '0.5px',
+                    }}>
+                      <th style={{ padding: '16px' }}>产品名称</th>
+                      <th style={{ padding: '16px' }}>分类</th>
+                      <th style={{ padding: '16px' }}>类型</th>
+                      <th style={{ padding: '16px' }}>毛利率</th>
+                      <th style={{ padding: '16px' }}>销售额</th>
+                      <th style={{ padding: '16px' }}>销量</th>
+                      <th style={{ padding: '16px' }}>建议行动</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productRecs.map((rec, i) => {
+                      const typeColors = { star: '#ffc400', potential: colors.goldMain, clearance: '#ff6b6b' };
+                      const typeLabels = { star: '明星', potential: '潜力', clearance: '清库' };
+                      return (
+                        <tr key={i} style={{
+                          borderBottom: `1px solid rgba(176, 155, 123, 0.2)`,
+                          background: i % 2 === 0 ? `rgba(176, 155, 123, 0.08)` : 'transparent',
+                          transition: 'background 0.3s ease',
+                        }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = `rgba(176, 155, 123, 0.15)`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = i % 2 === 0 ? `rgba(176, 155, 123, 0.08)` : 'transparent';
+                          }}
+                        >
+                          <td style={{ padding: '12px', fontWeight: '700', color: colors.white }}>{rec.productName}</td>
+                          <td style={{ padding: '12px', color: colors.textSecondary }}>{rec.category}</td>
+                          <td style={{ padding: '12px' }}>
+                            <span style={{
+                              background: `${typeColors[rec.type]}33`,
+                              color: typeColors[rec.type],
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontWeight: '700',
+                              fontSize: '12px',
+                            }}>
+                              {typeLabels[rec.type]}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '700' }}>
+                            {rec.marginPct.toFixed(2)}%
+                          </td>
+                          <td style={{ padding: '12px', color: colors.goldSecondary }}>
+                            ¥{rec.revenue.toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px' }}>{rec.units}</td>
+                          <td style={{ padding: '12px', fontSize: '12px', color: colors.textSecondary }}>
+                            {rec.action}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'alerts' && (
+            <div>
+              <h2 style={{
+                fontSize: '20px',
+                color: colors.goldMain,
+                margin: '0 0 30px 0',
+                fontWeight: '700',
+              }}>
+                ⚠️ 异常告警系统
+              </h2>
+
+              {alerts.length === 0 ? (
+                <div style={{
+                  background: `rgba(255, 255, 255, 0.08)`,
+                  backdropFilter: 'blur(15px)',
+                  border: `1px solid ${colors.goldMain}`,
+                  borderRadius: '8px',
+                  padding: '40px',
+                  textAlign: 'center',
+                }}>
+                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>✨</div>
+                  <div style={{ fontSize: '16px', color: colors.goldMain, fontWeight: '700', marginBottom: '8px' }}>
+                    没有异常告警
+                  </div>
+                  <div style={{ fontSize: '13px', color: colors.textSecondary }}>
+                    你的产品组合健康状况良好，继续保持现有策略
+                  </div>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '20px',
+                }}>
+                  {alerts.map((alert, i) => {
+                    const severityColors = {
+                      high: { bg: 'rgba(255, 107, 107, 0.15)', border: 'rgba(255, 107, 107, 0.5)', text: '#ff6b6b' },
+                      medium: { bg: 'rgba(255, 193, 7, 0.15)', border: 'rgba(255, 193, 7, 0.5)', text: '#ffc107' },
+                      low: { bg: 'rgba(33, 150, 243, 0.15)', border: 'rgba(33, 150, 243, 0.5)', text: '#2196f3' },
+                    };
+                    const colors_ = severityColors[alert.severity];
+                    return (
+                      <div key={alert.id} style={{
+                        background: colors_.bg,
+                        border: `1px solid ${colors_.border}`,
+                        borderRadius: '8px',
+                        padding: '24px',
+                        borderLeft: `4px solid ${colors_.text}`,
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '16px',
+                        }}>
+                          <div style={{
+                            fontSize: '24px',
+                            flexShrink: 0,
+                          }}>
+                            {alert.severity === 'high' ? '🚨' : alert.severity === 'medium' ? '⚠️' : 'ℹ️'}
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <h3 style={{
+                              margin: '0 0 8px 0',
+                              fontSize: '16px',
+                              fontWeight: '700',
+                              color: colors.white,
+                            }}>
+                              {alert.title}
+                            </h3>
+                            <p style={{
+                              margin: '0 0 12px 0',
+                              fontSize: '13px',
+                              color: colors.textSecondary,
+                              lineHeight: '1.5',
+                            }}>
+                              {alert.description}
+                            </p>
+                            {alert.affectedProducts.length > 0 && (
+                              <div style={{ marginBottom: '12px' }}>
+                                <div style={{
+                                  fontSize: '11px',
+                                  color: colors.textSecondary,
+                                  marginBottom: '6px',
+                                  textTransform: 'uppercase',
+                                  fontWeight: '600',
+                                  letterSpacing: '0.5px',
+                                }}>
+                                  受影响产品
+                                </div>
+                                <div style={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: '8px',
+                                }}>
+                                  {alert.affectedProducts.map((product, j) => (
+                                    <span key={j} style={{
+                                      background: `${colors_.text}33`,
+                                      color: colors_.text,
+                                      padding: '4px 12px',
+                                      borderRadius: '4px',
+                                      fontSize: '12px',
+                                      fontWeight: '600',
+                                    }}>
+                                      {product}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <div style={{
+                              background: `rgba(255, 255, 255, 0.08)`,
+                              borderRadius: '6px',
+                              padding: '12px',
+                              fontSize: '12px',
+                              color: colors.white,
+                              borderLeft: `2px solid ${colors_.text}`,
+                            }}>
+                              <span style={{
+                                fontWeight: '700',
+                                color: colors_.text,
+                                marginRight: '6px',
+                              }}>
+                                💡 建议：
+                              </span>
+                              {alert.recommendation}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readExcel, detectProductSheet } from '@/lib/excel-parser';
 import { analyzeProducts, calculateMetrics } from '@/lib/margin-calculator';
+import { PrismaClient } from '@prisma/client';
 import type { AnalysisData } from '@/lib/types';
+
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,7 +40,35 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(analysisData, { status: 200 });
+    // Save to database
+    const savedAnalysis = await prisma.analysis.create({
+      data: {
+        status: 'completed',
+        data: JSON.stringify(analysisData),
+        products: {
+          create: analysisData.products.map(p => ({
+            productId: p.product_id,
+            productName: p.product_name,
+            category: p.category,
+            cost: p.cost,
+            price: p.price,
+            salesVolume: p.sales_volume,
+            grossMarginPct: p.gross_margin_pct,
+            grossMarginAbs: p.gross_margin_abs,
+            totalMargin: p.total_margin,
+          })),
+        },
+      },
+      include: {
+        products: true,
+      },
+    });
+
+    // Return with analysisId for future reference
+    return NextResponse.json({
+      ...analysisData,
+      analysisId: savedAnalysis.id,
+    }, { status: 200 });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
