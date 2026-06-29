@@ -1377,10 +1377,10 @@ export default function Dashboard() {
                           fontWeight: '700',
                           textTransform: 'uppercase',
                         }}>
-                          🎯 当前目标
+                          🎯 当前毛利率
                         </h4>
                         <p style={{ margin: 0, color: colors.white, fontSize: '14px' }}>
-                          {targetRecs.recommendation || '达到行业平均水准'}
+                          {targetRecs.currentMarginPct?.toFixed(2)}%
                         </p>
                       </div>
 
@@ -1397,10 +1397,10 @@ export default function Dashboard() {
                           fontWeight: '700',
                           textTransform: 'uppercase',
                         }}>
-                          🚀 优先级产品
+                          🎯 推荐目标
                         </h4>
                         <p style={{ margin: 0, color: colors.white, fontSize: '14px' }}>
-                          {targetRecs.priorityAreas?.join(', ') || '成本控制和定价优化'}
+                          {targetRecs.recommendedTarget}%
                         </p>
                       </div>
                     </div>
