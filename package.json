@@ -20,7 +20,11 @@
     "@prisma/client": "^5.0.0",
     "xlsx": "^0.18.5",
     "dotenv": "^16.3.1",
-    "typescript": "^5.2.0"
+    "typescript": "^5.2.0",
+    "html2pdf.js": "^0.10.1",
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1",
+    "recharts": "^2.10.0"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",
