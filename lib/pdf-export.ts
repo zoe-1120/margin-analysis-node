@@ -129,7 +129,7 @@ export async function generatePDFReport(
         <div class="metrics">
           <div class="metric-card">
             <div class="metric-label">总毛利</div>
-            <div class="metric-value">¥${Math.round(metrics.total_margin).toLocaleString()}</div>
+            <div class="metric-value">RM${Math.round(metrics.total_margin).toLocaleString()}</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">平均毛利率</div>
@@ -166,12 +166,12 @@ export async function generatePDFReport(
                 <tr>
                   <td>${p.product_name}</td>
                   <td>${p.category}</td>
-                  <td>¥${p.cost.toFixed(2)}</td>
-                  <td>¥${p.price.toFixed(2)}</td>
+                  <td>RM${p.cost.toFixed(2)}</td>
+                  <td>RM${p.price.toFixed(2)}</td>
                   <td>${p.sales_volume}</td>
-                  <td class="text-gold">¥${p.gross_margin_abs.toFixed(2)}</td>
+                  <td class="text-gold">RM${p.gross_margin_abs.toFixed(2)}</td>
                   <td class="text-gold">${p.gross_margin_pct}%</td>
-                  <td class="text-gold">¥${Math.round(p.total_margin).toLocaleString()}</td>
+                  <td class="text-gold">RM${Math.round(p.total_margin).toLocaleString()}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -198,9 +198,9 @@ export async function generatePDFReport(
                 <tr>
                   <td>${c.category}</td>
                   <td>${c.products.length}</td>
-                  <td>¥${Math.round(c.totalRevenue).toLocaleString()}</td>
-                  <td>¥${Math.round(c.totalCost).toLocaleString()}</td>
-                  <td class="text-gold">¥${Math.round(c.totalMargin).toLocaleString()}</td>
+                  <td>RM${Math.round(c.totalRevenue).toLocaleString()}</td>
+                  <td>RM${Math.round(c.totalCost).toLocaleString()}</td>
+                  <td class="text-gold">RM${Math.round(c.totalMargin).toLocaleString()}</td>
                   <td class="text-gold">${c.avgMarginPct}%</td>
                   <td>${c.totalUnits}</td>
                 </tr>

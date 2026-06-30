@@ -666,7 +666,7 @@ export default function Dashboard() {
                 marginBottom: '40px',
               }}>
                 {[
-                  { label: '总毛利', value: `¥${Math.round(analysis.metrics.total_margin).toLocaleString()}`, icon: '💰', color: colors.goldMain },
+                  { label: '总毛利', value: `RM${Math.round(analysis.metrics.total_margin).toLocaleString()}`, icon: '💰', color: colors.goldMain },
                   { label: '平均毛利率', value: `${analysis.metrics.avg_margin_pct.toFixed(2)}%`, icon: '📈', color: colors.goldMain },
                   { label: '综合毛利率', value: `${analysis.metrics.margin_pct.toFixed(2)}%`, icon: '📊', color: colors.goldSecondary },
                   { label: '总销售量', value: `${analysis.metrics.total_units}`, icon: '🛍️', color: colors.goldSecondary },
@@ -742,7 +742,7 @@ export default function Dashboard() {
                     <YAxis stroke={colors.textSecondary} />
                     <Tooltip contentStyle={{ background: colors.darkBg1, border: `1px solid ${colors.goldMain}`, borderRadius: '6px' }} />
                     <Legend />
-                    <Bar dataKey="margin" fill={colors.goldMain} name="总毛利 (¥)" />
+                    <Bar dataKey="margin" fill={colors.goldMain} name="总毛利 (RM)" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -776,7 +776,7 @@ export default function Dashboard() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, value }) => `${name}: ¥${value.toLocaleString()}`}
+                      label={({ name, value }) => `${name}: RM${value.toLocaleString()}`}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
@@ -785,7 +785,7 @@ export default function Dashboard() {
                         <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => `¥${value.toLocaleString()}`} />
+                    <Tooltip formatter={(value) => `RM${value.toLocaleString()}`} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -855,17 +855,17 @@ export default function Dashboard() {
                         >
                           <td style={{ padding: '12px' }}>{product.product_name}</td>
                           <td style={{ padding: '12px' }}>{product.category}</td>
-                          <td style={{ padding: '12px' }}>¥{product.cost.toFixed(2)}</td>
-                          <td style={{ padding: '12px' }}>¥{product.price.toFixed(2)}</td>
+                          <td style={{ padding: '12px' }}>RM{product.cost.toFixed(2)}</td>
+                          <td style={{ padding: '12px' }}>RM{product.price.toFixed(2)}</td>
                           <td style={{ padding: '12px' }}>{product.sales_volume}</td>
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '600' }}>
-                            ¥{product.gross_margin_abs.toFixed(2)}
+                            RM{product.gross_margin_abs.toFixed(2)}
                           </td>
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '700' }}>
                             {product.gross_margin_pct}%
                           </td>
                           <td style={{ padding: '12px', color: colors.goldSecondary, fontWeight: '700' }}>
-                            ¥{Math.round(product.total_margin).toLocaleString()}
+                            RM{Math.round(product.total_margin).toLocaleString()}
                           </td>
                         </tr>
                       ))}
@@ -940,10 +940,10 @@ export default function Dashboard() {
                         >
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '600' }}>{cat.category}</td>
                           <td style={{ padding: '12px' }}>{cat.products.length}</td>
-                          <td style={{ padding: '12px' }}>¥{Math.round(cat.totalRevenue).toLocaleString()}</td>
-                          <td style={{ padding: '12px' }}>¥{Math.round(cat.totalCost).toLocaleString()}</td>
+                          <td style={{ padding: '12px' }}>RM{Math.round(cat.totalRevenue).toLocaleString()}</td>
+                          <td style={{ padding: '12px' }}>RM{Math.round(cat.totalCost).toLocaleString()}</td>
                           <td style={{ padding: '12px', color: colors.goldSecondary, fontWeight: '700' }}>
-                            ¥{Math.round(cat.totalMargin).toLocaleString()}
+                            RM{Math.round(cat.totalMargin).toLocaleString()}
                           </td>
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '700' }}>
                             {cat.avgMarginPct.toFixed(2)}%
@@ -1091,17 +1091,17 @@ export default function Dashboard() {
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '600' }}>
                             {rec.productName}
                           </td>
-                          <td style={{ padding: '12px' }}>¥{rec.currentPrice.toFixed(2)}</td>
-                          <td style={{ padding: '12px' }}>¥{rec.currentPrice.toFixed(2)}</td>
+                          <td style={{ padding: '12px' }}>RM{rec.currentPrice.toFixed(2)}</td>
+                          <td style={{ padding: '12px' }}>RM{rec.currentPrice.toFixed(2)}</td>
                           <td style={{ padding: '12px', color: colors.goldSecondary, fontWeight: '700' }}>
-                            ¥{rec.recommendedPrice.toFixed(2)}
+                            RM{rec.recommendedPrice.toFixed(2)}
                           </td>
                           <td style={{
                             padding: '12px',
                             color: rec.priceChange > 0 ? '#ff6b6b' : '#51cf66',
                             fontWeight: '700',
                           }}>
-                            {rec.priceChange > 0 ? '+' : ''}{rec.priceChange.toFixed(2)}¥ ({((rec.priceChange / rec.currentPrice) * 100).toFixed(1)}%)
+                            {rec.priceChange > 0 ? '+' : ''}RM{rec.priceChange.toFixed(2)} ({((rec.priceChange / rec.currentPrice) * 100).toFixed(1)}%)
                           </td>
                           <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '700' }}>
                             {rec.targetMarginPct}%
@@ -1183,7 +1183,7 @@ export default function Dashboard() {
                           fontWeight: '700',
                           color: colors.goldSecondary,
                         }}>
-                          ¥{Math.round(scenario.originalTotal).toLocaleString()}
+                          RM{Math.round(scenario.originalTotal).toLocaleString()}
                         </div>
                       </div>
 
@@ -1207,7 +1207,7 @@ export default function Dashboard() {
                           fontWeight: '700',
                           color: colors.goldMain,
                         }}>
-                          ¥{Math.round(scenario.newTotal).toLocaleString()}
+                          RM{Math.round(scenario.newTotal).toLocaleString()}
                         </div>
                       </div>
 
@@ -1230,7 +1230,7 @@ export default function Dashboard() {
                           fontWeight: '700',
                           color: isPositive ? '#51cf66' : '#ff6b6b',
                         }}>
-                          {isPositive ? '+' : ''}{Math.round(scenario.difference).toLocaleString()}¥
+                          {isPositive ? '+' : ''}RM{Math.round(scenario.difference).toLocaleString()}
                         </div>
                         <div style={{
                           fontSize: '12px',
@@ -1311,16 +1311,16 @@ export default function Dashboard() {
                             <td style={{ padding: '12px', color: colors.goldMain, fontWeight: '600' }}>
                               {scenario.scenario}
                             </td>
-                            <td style={{ padding: '12px' }}>¥{Math.round(scenario.originalTotal).toLocaleString()}</td>
+                            <td style={{ padding: '12px' }}>RM{Math.round(scenario.originalTotal).toLocaleString()}</td>
                             <td style={{ padding: '12px', color: colors.goldSecondary, fontWeight: '700' }}>
-                              ¥{Math.round(scenario.newTotal).toLocaleString()}
+                              RM{Math.round(scenario.newTotal).toLocaleString()}
                             </td>
                             <td style={{
                               padding: '12px',
                               color: isPositive ? '#51cf66' : '#ff6b6b',
                               fontWeight: '700',
                             }}>
-                              {isPositive ? '+' : ''}¥{Math.round(scenario.difference).toLocaleString()}
+                              {isPositive ? '+' : ''}RM{Math.round(scenario.difference).toLocaleString()}
                             </td>
                             <td style={{
                               padding: '12px',
@@ -1471,7 +1471,7 @@ export default function Dashboard() {
                           color: '#ff6b6b',
                           fontWeight: '600',
                         }}>
-                          ¥{(costAnalysis?.highestCostPerUnit?.cost ?? analysis.products[0]?.cost ?? 0).toFixed(2)}
+                          RM{(costAnalysis?.highestCostPerUnit?.cost ?? analysis.products[0]?.cost ?? 0).toFixed(2)}
                         </div>
                       </div>
 
@@ -1504,7 +1504,7 @@ export default function Dashboard() {
                             color: '#51cf66',
                             fontWeight: '600',
                           }}>
-                            ¥{(costAnalysis?.lowestCostPerUnit?.cost ?? analysis.products[analysis.products.length-1]?.cost ?? 0).toFixed(2)}
+                            RM{(costAnalysis?.lowestCostPerUnit?.cost ?? analysis.products[analysis.products.length-1]?.cost ?? 0).toFixed(2)}
                           </div>
                         </div>
 
@@ -1537,7 +1537,7 @@ export default function Dashboard() {
                             color: colors.goldMain,
                             fontWeight: '600',
                           }}>
-                            ¥{Math.round(costAnalysis?.highestTotalCost?.totalCost ?? ((analysis.products[0]?.cost || 0) * (analysis.products[0]?.sales_volume || 0))).toLocaleString()}
+                            RM{Math.round(costAnalysis?.highestTotalCost?.totalCost ?? ((analysis.products[0]?.cost || 0) * (analysis.products[0]?.sales_volume || 0))).toLocaleString()}
                           </div>
                         </div>
                       </div>
@@ -1655,7 +1655,7 @@ export default function Dashboard() {
                             {rec.marginPct.toFixed(2)}%
                           </td>
                           <td style={{ padding: '12px', color: colors.goldSecondary }}>
-                            ¥{rec.revenue.toLocaleString()}
+                            RM{rec.revenue.toLocaleString()}
                           </td>
                           <td style={{ padding: '12px' }}>{rec.units}</td>
                           <td style={{ padding: '12px', fontSize: '12px', color: colors.textSecondary }}>
@@ -1866,7 +1866,7 @@ export default function Dashboard() {
             <tr style={{ borderBottom: '1px solid #ddd' }}>
               <td style={{ padding: '10px', fontWeight: 'bold' }}>总毛利</td>
               <td style={{ padding: '10px', color: '#b09b7b', fontWeight: 'bold' }}>
-                ¥{Math.round(analysis.metrics.total_margin).toLocaleString()}
+                RM{Math.round(analysis.metrics.total_margin).toLocaleString()}
               </td>
             </tr>
             <tr style={{ borderBottom: '1px solid #ddd' }}>
@@ -1907,14 +1907,14 @@ export default function Dashboard() {
                 <tr key={i} style={{ borderBottom: '1px solid #ddd', background: i % 2 === 0 ? '#fafafa' : 'white' }}>
                   <td style={{ padding: '10px' }}>{p.product_name}</td>
                   <td style={{ padding: '10px' }}>{p.category}</td>
-                  <td style={{ padding: '10px' }}>¥{p.cost.toFixed(2)}</td>
-                  <td style={{ padding: '10px' }}>¥{p.price.toFixed(2)}</td>
+                  <td style={{ padding: '10px' }}>RM{p.cost.toFixed(2)}</td>
+                  <td style={{ padding: '10px' }}>RM{p.price.toFixed(2)}</td>
                   <td style={{ padding: '10px' }}>{p.sales_volume}</td>
                   <td style={{ padding: '10px', color: '#b09b7b', fontWeight: 'bold' }}>
                     {p.gross_margin_pct}%
                   </td>
                   <td style={{ padding: '10px', color: '#b09b7b', fontWeight: 'bold' }}>
-                    ¥{Math.round(p.total_margin).toLocaleString()}
+                    RM{Math.round(p.total_margin).toLocaleString()}
                   </td>
                 </tr>
               ))}
